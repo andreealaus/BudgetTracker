@@ -1,0 +1,2 @@
+./xcuserdata/victor.xcuserdatad/xcschemes/xcschememanagement.plist
+./project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
