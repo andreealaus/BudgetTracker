@@ -24,11 +24,16 @@ struct AdminPanelView: View {
 
     // MARK: – Plan Budget form
     @State private var calendarExpanded = false
-    @State private var selectedPlanMonth = Date()
+    @State private var selectedPlanMonth = Date() 
     @State private var selectedExpenseCategory: CategoryEntity?
     @State private var budgetGoalTarget = ""
     @State private var budgetGoalProgress = ""
-
+    //obtinerea numelui lunii
+    private func monthName(for month: Int) -> String {
+        let dateFormatter = DateFormatter()
+        return dateFormatter.monthSymbols[month - 1]
+    }
+    
     // MARK: – CoreData fetches
     @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [])
     var coreDataUsers: FetchedResults<UserEntity>
@@ -41,7 +46,7 @@ struct AdminPanelView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \BudgetPlanEntity.date, ascending: false)]
     )
     var budgetPlans: FetchedResults<BudgetPlanEntity>
-
+    
     var body: some View {
         ZStack {
             Color(.systemGray4).edgesIgnoringSafeArea(.all)
@@ -176,59 +181,24 @@ struct AdminPanelView: View {
                 Text("Planifică Buget Lunar")
                     .font(.headline)
 
-                DisclosureGroup("Selectează Luna", isExpanded: $calendarExpanded) {
-                    DatePicker(
-                        "",
-                        selection: $selectedPlanMonth,
-                        displayedComponents: [.date]
-                    )
-                    .datePickerStyle(GraphicalDatePickerStyle())
-                }
-                .padding(.vertical)
-
-                if !myPlans.isEmpty {
-                    Text("Planuri existente:")
-                        .font(.subheadline)
-                        .padding(.bottom, 4)
-
-                    // Lista cu swipe-to-delete pentru planuri
-                    List {
-                        Section(header:
-                            HStack {
-                                Text("Categorie").bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Stabilită").bold()
-                                    .frame(width: 80, alignment: .center)
-                                Text("Cheltuită").bold()
-                                    .frame(width: 80, alignment: .center)
-                                Text("Depășit").bold()
-                                    .frame(width: 80, alignment: .center)
-                            }
-                        ) {
-                            ForEach(myPlans, id: \.id) { plan in
-                                HStack {
-                                    Text(plan.title ?? "")
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text(String(format: "%.2f", plan.amount))
-                                        .frame(width: 80, alignment: .center)
-                                    Text(String(format: "%.2f", plan.progress))
-                                        .frame(width: 80, alignment: .center)
-                                    let exceeded = plan.progress - plan.amount
-                                    Text(exceeded > 0
-                                        ? String(format: "%.2f", exceeded)
-                                        : "0.00"
-                                    )
-                                    .frame(width: 80, alignment: .center)
-                                    .foregroundColor(exceeded > 0 ? .red : .primary)
-                                }
-                            }
-                            .onDelete { offsets in
-                                deleteBudgetPlans(offsets: offsets, plans: myPlans)
-                            }
+                Menu {
+                    ForEach(1..<13, id: \.self) { month in
+                        Button(action: {
+                            var components = Calendar.current.dateComponents([.year], from: Date())
+                            components.month = month
+                            selectedPlanMonth = Calendar.current.date(from: components) ?? Date()
+        
+                        }) {
+                            Text(monthName(for: month))
                         }
                     }
-                    .listStyle(.plain)
-                    .frame(height: 200)
+                } label: {
+                    Text("Alege luna: \(monthName(for: Calendar.current.component(.month, from:selectedPlanMonth)))")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(10)
                 }
 
                 // Formular nou plan
@@ -254,6 +224,59 @@ struct AdminPanelView: View {
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(8)
+                
+                // Filtrăm planurile în funcție de luna selectată
+                let filteredPlans = myPlans.filter { plan in
+                    guard let date = plan.date else { return false }
+                    let planMonth = Calendar.current.component(.month, from: date)
+                    let selectedMonth = Calendar.current.component(.month, from: selectedPlanMonth)
+                    return planMonth == selectedMonth
+                }
+
+                if !filteredPlans.isEmpty {
+                    Text("Planuri existente:")
+                        .font(.subheadline)
+                        .padding(.bottom, 4)
+
+                    // Lista cu swipe-to-delete pentru planuri
+                    List {
+                        Section(header:
+                            HStack {
+                                Text("Categorie").bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Stabilit").bold()
+                                    .frame(width: 62, alignment: .center)
+                                Text("Cheltuit").bold()
+                                    .frame(width: 62, alignment: .center)
+                                Text("Disponibil").bold()
+                                    .frame(width: 71, alignment: .center)
+                            }
+                        ) {
+                            ForEach(filteredPlans, id: \.id) { plan in
+                                HStack {
+                                    Text(plan.title ?? "")
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text(String(format: "%.2f", plan.amount))
+                                        .frame(width: 62, alignment: .center)
+                                    Text(String(format: "%.2f", plan.progress))
+                                        .frame(width: 62, alignment: .center)
+                                    let exceeded = plan.amount - plan.progress
+                                    Text(exceeded > 0
+                                        ? String(format: "%.2f", exceeded)
+                                        : "0.00"
+                                    )
+                                    .frame(width: 71, alignment: .center)
+                                    .foregroundColor(exceeded < 0 ? .red : .primary)
+                                }
+                            }
+                            .onDelete { offsets in
+                                deleteBudgetPlans(offsets: offsets, plans: myPlans)
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                    .frame(maxHeight: .infinity)
+                }
 
                 Spacer()
             }

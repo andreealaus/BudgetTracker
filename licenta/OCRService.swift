@@ -15,30 +15,25 @@ class OCRService {
                 return
             }
             
-            // Recunoaștem textul pe linii separate
+            // Recunoaștem textul
             let recognizedText = request.results?.compactMap { result in
                 (result as? VNRecognizedTextObservation)?.topCandidates(1).first?.string
             }.joined(separator: "\n") ?? ""
-            
             print("Text recunoscut:\n\(recognizedText)")
             
             // Împărțim textul în linii
-            let lines = recognizedText.components(separatedBy: "\n")
-            
-            // Regex pentru sume (ex. "21.84", "21,84", "999" etc.)
-            let pattern = #"(\d{1,3}(?:[.,]\d{1,2})?)"#
+            let lines = recognizedText.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "-", with: ".").replacingOccurrences(of: ",", with: ".") }
+            let pattern = #"(?<=\s|^)(\d+[.]\d{2})(?=\s|$)"#
             guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
                 completion(nil)
                 return
             }
-            
             var foundAmounts: [Double] = []
-            
             // Iterăm prin toate liniile pentru a găsi unde apare "TOTAL"
             for i in 0..<lines.count {
                 let line = lines[i]
                 
-                // Normalizez linia (fără spații, uppercased) pentru a verifica "TOTAL"
+                // Normalizăm linia (fără spații, uppercased) pentru a verifica "TOTAL"
                 let normalizedLine = line.uppercased().replacingOccurrences(of: " ", with: "")
                 if normalizedLine.contains("TOTAL") {
                     // 1) Încercăm să extragem sume din aceeași linie
@@ -46,20 +41,18 @@ class OCRService {
                     
                     if !amountsInThisLine.isEmpty {
                         foundAmounts.append(contentsOf: amountsInThisLine)
-                    } else {
-                        // 2) Dacă nu s-a găsit nicio sumă pe aceeași linie, verificăm linia următoare (dacă există)
-                        if i+1 < lines.count {
-                            let nextLine = lines[i+1]
-                            let amountsInNextLine = extractAmounts(from: nextLine, using: regex)
-                            if !amountsInNextLine.isEmpty {
-                                foundAmounts.append(contentsOf: amountsInNextLine)
-                            }
-                        }
+                        break;
+                    } 
+                }
+                else{
+                    let amountsInCurrentLine = extractAmounts(from: normalizedLine, using: regex)
+                    if !amountsInCurrentLine.isEmpty {
+                        foundAmounts.append(contentsOf: amountsInCurrentLine)
                     }
                 }
             }
             
-            // Dacă am găsit sume în apropierea cuvântului "TOTAL", luăm pe cea mai mare
+            // Daca am gasit sume, o luam pe cea mai mare
             if !foundAmounts.isEmpty {
                 let maxAmount = foundAmounts.max()!
                 completion(maxAmount)

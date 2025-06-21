@@ -36,7 +36,7 @@ struct AddTransactionView: View {
                 Section(header: Text("Detalii Tranzacție")) {
                     TextField("Suma Totală", value: $totalAmount, formatter: numberFormatter)
                         .keyboardType(.decimalPad)
-                    TextField("Detalii (ex. achitare arendă, cumpărat produse)", text: $transactionDetails)
+                    TextField("Detalii (ex Cumparaturi supermarket, pranz, etc)", text: $transactionDetails)
                 }
 
                 Section(header: Text("Alocare Categorie")) {
@@ -116,13 +116,6 @@ struct AddTransactionView: View {
             return
         }
 
-        // 2) Actualizăm planul de buget asociat categoriei
-        updateBudgetPlan(for: category, addedAmount: totalAmount)
-    }
-
-    private func updateBudgetPlan(for category: CategoryEntity, addedAmount: Double) {
-        // Determinăm „proprietarul” planului:
-        // dacă user a fost creat de un admin, luăm acel admin; altfel însuși userul
         let planOwner: String
         if let userEntity = (selectedCategory == nil ? nil : fetchCurrentUserEntity()),
            let createdBy = userEntity.createdBy {
@@ -130,17 +123,26 @@ struct AddTransactionView: View {
         } else {
             planOwner = budgetManager.currentUser?.username ?? ""
         }
+        // 2) Actualizăm planul de buget asociat categoriei
+        updateBudgetPlan(for: category, addedAmount: totalAmount, planOwner: planOwner, context: viewContext)
+    }
 
-        // Căutăm planul cu titlul = nume categorie și createdBy = planOwner
+    public func updateBudgetPlan(for category: CategoryEntity, addedAmount: Double, planOwner: String, context: NSManagedObjectContext) {
+        
+        // Căutăm planul cu titlul = nume categorie și createdBy = planOwner, unde luna corepunde
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date())) ?? Date()
+        let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) ?? Date()
+
         let planReq: NSFetchRequest<BudgetPlanEntity> = BudgetPlanEntity.fetchRequest()
-        planReq.predicate = NSPredicate(format: "title == %@ AND createdBy == %@", category.name ?? "", planOwner)
+        planReq.predicate = NSPredicate(format: "title == %@ AND createdBy == %@ AND date >= %@ AND date < %@", category.name ?? "", planOwner, startOfMonth as NSDate, endOfMonth as NSDate)
 
         do {
-            if let plan = try viewContext.fetch(planReq).first {
+            if let plan = try context.fetch(planReq).first {
                 plan.progress += addedAmount
                 exceededCategoryName = category.name ?? ""
                 let exceeded = plan.progress > plan.amount
-                try viewContext.save()
+                try context.save()
                 if exceeded {
                     // Afișăm alerta de depășire
                     showBudgetExceededAlert = true

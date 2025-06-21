@@ -44,10 +44,14 @@ struct TotalView: View {
                 
                 // Calculăm suma totală a tranzacțiilor pentru familia utilizatorului curent
                 let totalAmount = filteredTransactions
+                    .filter { tx in
+                        guard let category = tx.category else { return false }
+                        return category.type == "expense"
+                    }
                     .map { $0.totalAmount }
                     .reduce(0, +)
                 
-                Text("Suma totală: \(totalAmount, specifier: "%.2f")")
+                Text("Suma totală cheltuită: \(totalAmount, specifier: "%.2f")")
                     .font(.headline)
                     .padding()
                 

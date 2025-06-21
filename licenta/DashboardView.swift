@@ -31,28 +31,28 @@ struct DashboardView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView(selection: $selectedTab) {
-                DailyView(transactions: filteredTransactions) // Aici trimitem tranzacțiile filtrate
+                DailyView(transactions: filteredTransactions) 
                     .tabItem {
                         Image(systemName: "arrow.down.circle")
                         Text("Cheltuieli")
                     }
                     .tag(0)
                 
-                CalendarView(transactions: filteredTransactions) // Transmite tranzacțiile filtrate
+                CalendarView(transactions: filteredTransactions) 
                     .tabItem {
                         Image(systemName: "calendar")
                         Text("Calendar")
                     }
                     .tag(1)
 
-                MonthlyView(transactions: filteredTransactions) // Tranzacțiile filtrate pentru MonthlyView
+                MonthlyView(transactions: filteredTransactions) 
                     .tabItem {
                         Image(systemName: "arrow.up.circle")
                         Text("Venituri")
                     }
                     .tag(2)
                 
-                TotalView(transactions: filteredTransactions) // Tranzacțiile filtrate pentru TotalView
+                TotalView(transactions: filteredTransactions) 
                     .tabItem {
                         Image(systemName: "sum")
                         Text("Total")

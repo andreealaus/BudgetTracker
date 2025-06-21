@@ -76,7 +76,7 @@ struct OCRView: View {
                     print("Nu există o imagine pentru procesare")
                     return
                 }
-                // Simulăm extragerea sumei din imaginea aleasă
+                
                 OCRService.scanReceipt(from: imageToProcess) { result in
                     DispatchQueue.main.async {
                         extractedAmount = result
@@ -103,7 +103,7 @@ struct OCRView: View {
     }
 
     private func addExpenseTransaction(amount: Double) {
-        // Creăm un nou TransactionEntity pentru cheltuieli
+        // Nou TransactionEntity pentru cheltuieli
         let newTx = TransactionEntity(context: viewContext)
         newTx.id = UUID()
         newTx.date = Date()
@@ -134,6 +134,19 @@ struct OCRView: View {
         } catch {
             print("Eroare la salvarea tranzacției: \(error)")
         }
+        
+        // Actualizăm planul de buget asociat categoriei
+        let planOwner: String
+        if let userEntity = (selectedCategory == nil ? nil : fetchCurrentUserEntity()),
+           let createdBy = userEntity.createdBy {
+            planOwner = createdBy
+        } else {
+            planOwner = budgetManager.currentUser?.username ?? ""
+        }
+            if let selectedCategory = selectedCategory {
+                let addTransactionView = AddTransactionView()
+                addTransactionView.updateBudgetPlan(for: selectedCategory, addedAmount: amount, planOwner: planOwner, context: viewContext)
+            }
     }
 
     private func fetchCurrentUserEntity() -> UserEntity? {

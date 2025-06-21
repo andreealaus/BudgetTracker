@@ -7,7 +7,6 @@ struct PersistenceController {
     let container: NSPersistentContainer
     
     init(inMemory: Bool = false) {
-        // Asigură-te că "BudgetAppModel" este exact numele fișierului .xcdatamodeld
         container = NSPersistentContainer(name: "BudgetAppModel")
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
@@ -37,14 +36,14 @@ struct PersistenceController {
                 // Creăm un admin demo
                 let admin = UserEntity(context: context)
                 admin.id = UUID()
-                admin.username = "Alex_admin"
+                admin.username = "Andreea_admin"
                 admin.role = "admin"
                 admin.password = "admin123"
                 
-                // Creăm useri regular adăugați de adminul "Alex_admin"
+                // Creăm useri regular adăugați de adminul "Andreea_admin"
                 let user1 = UserEntity(context: context)
                 user1.id = UUID()
-                user1.username = "Viorel"
+                user1.username = "Alex"
                 user1.role = "regular"
                 user1.password = "user123"
                 user1.createdBy = admin.username
@@ -61,28 +60,32 @@ struct PersistenceController {
                 rentCategory.id = UUID()
                 rentCategory.name = "Locuinta"
                 rentCategory.type = "expense"
+                rentCategory.createdBy = admin.username
                 
                 let salaryCategory = CategoryEntity(context: context)
                 salaryCategory.id = UUID()
                 salaryCategory.name = "Salariu"
                 salaryCategory.type = "income"
+                salaryCategory.createdBy = admin.username
                 
                 let allowanceCategory = CategoryEntity(context: context)
                 allowanceCategory.id = UUID()
                 allowanceCategory.name = "Alocație"
                 allowanceCategory.type = "income"
+                allowanceCategory.createdBy = admin.username
                 
                 let productsCategory = CategoryEntity(context: context)
                 productsCategory.id = UUID()
-                productsCategory.name = "Produse"
+                productsCategory.name = "Alimente"
                 productsCategory.type = "expense"
+                productsCategory.createdBy = admin.username
                 
                 // MARK: - Tranzacții de test
                 let salaryTx = TransactionEntity(context: context)
                 salaryTx.id = UUID()
                 salaryTx.date = Date()
                 salaryTx.totalAmount = 4000.0
-                salaryTx.note = "Primit salariu luna februarie"
+                salaryTx.note = "Salariu luna iunie"
                 salaryTx.user = admin
                 salaryTx.category = salaryCategory
                 
@@ -90,7 +93,7 @@ struct PersistenceController {
                 allowanceTx.id = UUID()
                 allowanceTx.date = Date()
                 allowanceTx.totalAmount = 200.0
-                allowanceTx.note = "Primit alocație"
+                allowanceTx.note = "Alocație"
                 allowanceTx.user = admin
                 allowanceTx.category = allowanceCategory
                 
@@ -98,7 +101,7 @@ struct PersistenceController {
                 rentTx.id = UUID()
                 rentTx.date = Date()
                 rentTx.totalAmount = 1000.0
-                rentTx.note = "Achitare arenda apartament"
+                rentTx.note = "Achitare chirie apartament"
                 rentTx.user = user1
                 rentTx.category = rentCategory
                 

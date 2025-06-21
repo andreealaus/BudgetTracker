@@ -2,6 +2,7 @@ import SwiftUI
 import CoreData
 
 struct MonthlyReportView: View {
+    @EnvironmentObject var budgetManager: BudgetManager
     @Environment(\.managedObjectContext) private var viewContext
     @State private var selectedMonth: Date = Date()
     @State private var reportContent: String = ""
@@ -65,6 +66,9 @@ struct MonthlyReportView: View {
         let fetchRequest: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "date >= %@ AND date < %@", startOfMonth as NSDate, endOfMonth as NSDate)
         
+        // Fetch users created by the current user
+        let currentUsers = fetchUsersCreatedByCurrentUser()
+        
         do {
             let results = try viewContext.fetch(fetchRequest)
             print("Fetched \(results.count) transactions for month \(getMonthString())")
@@ -74,16 +78,23 @@ struct MonthlyReportView: View {
                 }
             }
             
-            let income = results.filter { $0.category?.type == "income" }
-                                 .reduce(0) { $0 + $1.totalAmount }
-            let expense = results.filter { $0.category?.type == "expense" }
-                                  .reduce(0) { $0 + $1.totalAmount }
+            let income = results.filter { tx in
+                tx.category?.type == "income" && currentUsers.contains(where: { $0.username == tx.user?.username })
+            }.reduce(0) { $0 + $1.totalAmount }
             
-            reportContent = """
-                Venituri: \(String(format: "%.2f", income))
-                Cheltuieli: \(String(format: "%.2f", expense))
-                Net: \(String(format: "%.2f", income - expense))
-            """
+            let userExpenses: [(username: String, expense: Double)] = currentUsers.map { user in
+                 let userTransactions = results.filter { $0.user?.username == user.username }
+                 let totalExpense = userTransactions.filter { $0.category?.type == "expense" }.reduce(0) { $0 + $1.totalAmount }
+                 return (username: user.username ?? "Unknown", expense: totalExpense)
+             }
+            
+            // Build the report content
+            var content = "Venituri: \(String(format: "%.2f", income)) lei\n\nCheltuieli:\n"
+            for userExpense in userExpenses {
+                content += "         \(userExpense.username): \(String(format: "%.2f", userExpense.expense)) lei\n"
+            }
+            
+            reportContent = content
         } catch {
             print("Eroare la generarea raportului: \(error)")
         }
@@ -96,6 +107,7 @@ struct MonthlyReportView: View {
         newReport.title = "Raport pentru luna \(getMonthString())"
         newReport.content = reportContent
         newReport.date = selectedMonth
+        newReport.createdBy = budgetManager.currentUser?.username
         
         do {
             try viewContext.save()
@@ -110,6 +122,34 @@ struct MonthlyReportView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: selectedMonth)
+    }
+
+    private func fetchUsersCreatedByCurrentUser() -> [UserEntity] {
+        guard let currentUsername = budgetManager.currentUser?.username else {
+            print("Nu există utilizator curent.")
+            return []
+        }
+        
+        let fetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "createdBy == %@", currentUsername)
+        
+        do {
+            var users = try viewContext.fetch(fetchRequest)
+            print("Fetched \(users.count) users created by \(currentUsername)")
+            
+            // Fetch the current user explicitly
+            let currentUserFetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+            currentUserFetchRequest.predicate = NSPredicate(format: "username == %@", currentUsername)
+            
+            if let currentUser = try viewContext.fetch(currentUserFetchRequest).first {
+                users.append(currentUser)
+            }
+            
+            return users
+        } catch {
+            print("Eroare la fetch-ul utilizatorilor: \(error)")
+            return []
+        }
     }
 }
 

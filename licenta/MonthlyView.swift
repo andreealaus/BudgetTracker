@@ -6,6 +6,10 @@ struct MonthlyView: View {
     @EnvironmentObject var budgetManager: BudgetManager
     @State private var selectedMonth: Date = Date()
     @State private var isCalendarExpanded: Bool = false // Starea de expansiune a calendarului
+    private func monthName(for month: Int) -> String {
+        let dateFormatter = DateFormatter()
+        return dateFormatter.monthSymbols[month - 1]
+    }
 
     // Tranzacțiile filtrate transmise din DashboardView
     var transactions: [TransactionEntity]
@@ -19,11 +23,26 @@ struct MonthlyView: View {
                 
                 // Buton pentru a arăta/ascunde calendarul
                 DisclosureGroup(isExpanded: $isCalendarExpanded) {
-                    DatePicker("Selectează luna", selection: $selectedMonth, displayedComponents: [.date])
-                        .labelsHidden()
-                        .padding()
-                        .background(Color(.systemGray5))
-                        .cornerRadius(8)
+                    
+                    Menu {
+                        ForEach(1..<13, id: \.self) { month in
+                            Button(action: {
+                                var components = Calendar.current.dateComponents([.year], from: Date())
+                                components.month = month
+                                selectedMonth = Calendar.current.date(from: components) ?? Date()
+            
+                            }) {
+                                Text(monthName(for: month))
+                            }
+                        }
+                    } label: {
+                        Text("Alege luna: \(monthName(for: Calendar.current.component(.month, from:selectedMonth)))")
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(10)
+                    }
                 } label: {
                     Text("Selectează luna")
                         .font(.headline)
