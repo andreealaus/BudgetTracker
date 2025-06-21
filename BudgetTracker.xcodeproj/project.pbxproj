@@ -36,7 +36,6 @@
 		578CBEBA2DA16352006577D3 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBEB92DA16352006577D3 /* UIImage.swift */; };
 		578CBEBC2DA1667C006577D3 /* InteractiveCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBEBB2DA1667C006577D3 /* InteractiveCropView.swift */; };
 		578CBEC12DA16F1E006577D3 /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = 578CBEC02DA16F1E006577D3 /* Mantis */; };
-		578CBEC52DA19BCA006577D3 /* AddReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBEC42DA19BCA006577D3 /* AddReportView.swift */; };
 		578CBEC72DA1A4A6006577D3 /* ReportSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBEC62DA1A4A6006577D3 /* ReportSheetView.swift */; };
 		578CBEC92DA1A750006577D3 /* MonthlyReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBEC82DA1A750006577D3 /* MonthlyReportView.swift */; };
 		578CBECB2DA1AED8006577D3 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECA2DA1AED8006577D3 /* ReportsView.swift */; };
@@ -44,6 +43,7 @@
 		578CBECF2DA1BF99006577D3 /* AddCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */; };
 		57D762B22DAAAC5B00F8AA25 /* CategoryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */; };
 		57D762B42DAAC35200F8AA25 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D762B32DAAC35200F8AA25 /* EditTransactionView.swift */; };
+		FFAA92922E04725B00E12270 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA92912E04725B00E12270 /* PieChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,7 +96,6 @@
 		578CBEB72DA16314006577D3 /* CropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropImageView.swift; sourceTree = "<group>"; };
 		578CBEB92DA16352006577D3 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		578CBEBB2DA1667C006577D3 /* InteractiveCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveCropView.swift; sourceTree = "<group>"; };
-		578CBEC42DA19BCA006577D3 /* AddReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReportView.swift; sourceTree = "<group>"; };
 		578CBEC62DA1A4A6006577D3 /* ReportSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheetView.swift; sourceTree = "<group>"; };
 		578CBEC82DA1A750006577D3 /* MonthlyReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyReportView.swift; sourceTree = "<group>"; };
 		578CBECA2DA1AED8006577D3 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
@@ -104,6 +103,7 @@
 		578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryView.swift; sourceTree = "<group>"; };
 		57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerView.swift; sourceTree = "<group>"; };
 		57D762B32DAAC35200F8AA25 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
+		FFAA92912E04725B00E12270 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +173,7 @@
 				5746C6F32D6781B000ADE4FA /* TotalView.swift */,
 				5746C6F52D6781C600ADE4FA /* NotesView.swift */,
 				5746C6F92D67C5DE00ADE4FA /* PersistenceController.swift */,
+				FFAA92912E04725B00E12270 /* PieChartView.swift */,
 				5746C7012D67CDBB00ADE4FA /* AllTransactionsView.swift */,
 				5746C7032D690C5800ADE4FA /* AddNoteView.swift */,
 				5746C7052D693E6500ADE4FA /* TransactionCardView.swift */,
@@ -182,7 +183,6 @@
 				578CBEB72DA16314006577D3 /* CropImageView.swift */,
 				578CBEB92DA16352006577D3 /* UIImage.swift */,
 				578CBEBB2DA1667C006577D3 /* InteractiveCropView.swift */,
-				578CBEC42DA19BCA006577D3 /* AddReportView.swift */,
 				578CBEC62DA1A4A6006577D3 /* ReportSheetView.swift */,
 				578CBEC82DA1A750006577D3 /* MonthlyReportView.swift */,
 				578CBECA2DA1AED8006577D3 /* ReportsView.swift */,
@@ -360,13 +360,13 @@
 				578CBECB2DA1AED8006577D3 /* ReportsView.swift in Sources */,
 				5746C6DA2D66921500ADE4FA /* NotificationManager.swift in Sources */,
 				578CBECF2DA1BF99006577D3 /* AddCategoryView.swift in Sources */,
+				FFAA92922E04725B00E12270 /* PieChartView.swift in Sources */,
 				5746C7042D690C5800ADE4FA /* AddNoteView.swift in Sources */,
 				5746C6F22D67815E00ADE4FA /* MonthlyView.swift in Sources */,
 				5746C7022D67CDBB00ADE4FA /* AllTransactionsView.swift in Sources */,
 				5746C6D82D6691DA00ADE4FA /* BudgetManager.swift in Sources */,
 				5746C6DE2D66927900ADE4FA /* BudgetApp.swift in Sources */,
 				578CBEB82DA16314006577D3 /* CropImageView.swift in Sources */,
-				578CBEC52DA19BCA006577D3 /* AddReportView.swift in Sources */,
 				5746C6D62D66915200ADE4FA /* Models.swift in Sources */,
 				5746C7002D67C91E00ADE4FA /* BudgetAppModel.xcdatamodeld in Sources */,
 				578CBECD2DA1BF4D006577D3 /* AddUserView.swift in Sources */,
