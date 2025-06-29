@@ -88,7 +88,7 @@ struct MonthlyReportView: View {
                  return (username: user.username ?? "Unknown", expense: totalExpense)
              }
             
-            // Build the report content
+            // Construim conținutul raportului
             var content = "Venituri: \(String(format: "%.2f", income)) lei\n\nCheltuieli:\n"
             for userExpense in userExpenses {
                 content += "         \(userExpense.username): \(String(format: "%.2f", userExpense.expense)) lei\n"

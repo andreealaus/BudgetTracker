@@ -29,7 +29,7 @@ struct AdminPanelView: View {
     @State private var budgetGoalTarget = ""
     @State private var showBudgetAlreadyExistsAlert = false
     
-    // Fetches
+    // Fetch Requests
     @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [])
     var coreDataUsers: FetchedResults<UserEntity>
 
@@ -372,19 +372,15 @@ struct AdminPanelView: View {
         fetchRequest.predicate = NSPredicate(format: "category == %@", cat)
 
         do {
-        // Execute the fetch request
         let transactions = try viewContext.fetch(fetchRequest)
-        
-        // Calculate the sum of totalAmount for all fetched transactions
         let totalAmountSum = transactions.reduce(0.0) { $0 + $1.totalAmount }
         print("Suma totală a tranzacțiilor pentru categoria \(cat.name ?? "necunoscută"): \(totalAmountSum)")
         
-        // Create a new budget plan
         let bp = BudgetPlanEntity(context: viewContext)
         bp.id = UUID()
         bp.title = cat.name
         bp.amount = Double(budgetGoalTarget) ?? 0
-        bp.progress = totalAmountSum // Use the calculated sum as the progress
+        bp.progress = totalAmountSum 
         bp.date = selectedPlanMonth
         bp.createdBy = budgetManager.currentUser?.username
         bp.familyID = budgetManager.currentUser?.familyID

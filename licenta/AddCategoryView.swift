@@ -23,7 +23,6 @@ struct AddCategoryView: View {
             .padding(.horizontal)
             
             Button("Salvează") {
-                // Aici vei adăuga logica de salvare a categoriei
                 presentationMode.wrappedValue.dismiss()
             }
             .padding()

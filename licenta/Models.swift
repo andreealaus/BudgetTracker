@@ -1,6 +1,6 @@
 import Foundation
 
-// MARK: - Enum-uri
+// Enums
 enum UserRole: String{
     case admin
     case regular
@@ -11,7 +11,7 @@ enum CategoryType: Hashable, Equatable {
     case income
 }
 
-// MARK: - Modele
+// Modele
 class User: Hashable, Equatable {
     var id = UUID()
     var username: String

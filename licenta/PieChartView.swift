@@ -19,8 +19,7 @@ struct PieChartView: View {
                     // Pie Slice
                     PieSliceView(startAngle: startAngle, endAngle: endAngle, color: colors[index % colors.count])
                     
-                    // Percentage Text
-                    if data[index] > 0 { // Only show percentage for non-zero values
+                    if data[index] > 0 { 
                         Text("\(percentage(for: data[index]))%")
                             .font(.caption)
                             .foregroundColor(.white)
@@ -43,7 +42,7 @@ struct PieChartView: View {
     }
     
     private func position(for midAngle: Double, in size: CGSize) -> CGPoint {
-        let radius = size.width / 2 * 0.6 // Reduce radius for text placement closer to the center of the slice
+        let radius = size.width / 2 * 0.6 
         let x = size.width / 2 + radius * cos(midAngle)
         let y = size.height / 2 + radius * sin(midAngle)
         return CGPoint(x: x, y: y)

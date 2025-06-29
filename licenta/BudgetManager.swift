@@ -76,7 +76,7 @@ class BudgetManager: ObservableObject {
         return plan
     }
     
-    // MARK: - Adăugare tranzacție (modificat pentru a salva și în Core Data)
+    // Adăugare tranzacție (modificat pentru a salva și în Core Data)
     func addTransaction(by user: User,
                         totalAmount: Double,
                         categoryAllocations: [Category: Double]) -> Transaction {
@@ -93,10 +93,6 @@ class BudgetManager: ObservableObject {
             newTxEntity.id = UUID()
             newTxEntity.date = transaction.date
             newTxEntity.totalAmount = transaction.totalAmount
-            // Dacă ai logica de a salva user, category etc. în Core Data,
-            // trebuie să găsești UserEntity și CategoryEntity corespunzătoare și să le setezi.
-            // Ex: newTxEntity.user = ...
-            // Ex: newTxEntity.category = ...
             
             do {
                 try context.save()

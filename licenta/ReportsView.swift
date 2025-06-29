@@ -75,17 +75,12 @@ struct ReportDetailView: View {
             
             Divider()
             
-            // Extract numbers from the text
             let numbers = extractNumbers(from: report.content ?? "")
-            // Ensure the numbers array has valid values
             let data = numbers.count > 1 ? Array(numbers.dropFirst()) : []
-            // Generate colors for the pie chart
             let colors = generateColors(count: data.count)
-            //Extract the usernames
             let usersExtracted = extractUsernames(from: report.content ?? "")
             let users = usersExtracted.count > 1 ? Array(usersExtracted.dropFirst()) : []
             
-            // Pie Chart
             PieChartView(
                 data: data,
                 colors: colors
@@ -94,7 +89,7 @@ struct ReportDetailView: View {
             .frame(maxWidth: .infinity, alignment: .center) 
             .padding(.horizontal)
             
-            // Legend
+            // Legenda
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     Text("Venituri: \(String(format: "%.2f", numbers[0])) lei")
@@ -103,9 +98,9 @@ struct ReportDetailView: View {
                 ForEach(0..<data.count, id: \.self) { index in
                     HStack {
                         Circle()
-                            .fill(colors[index]) // Use the corresponding color for each user
+                            .fill(colors[index])
                             .frame(width: 15, height: 15)
-                        Text("\(users[index]): \(String(format: "%.2f", data[index])) lei") // Show username from users array
+                        Text("\(users[index]): \(String(format: "%.2f", data[index])) lei")
                             .font(.subheadline)
                     }
                 }
@@ -125,22 +120,18 @@ struct ReportDetailView: View {
     }
     
     private func extractNumbers(from text: String) -> [Double] {
-        // Regular expression to match numbers followed by "lei"
         let pattern = "(\\d+(\\.\\d+)?)\\s*lei"
         let regex = try? NSRegularExpression(pattern: pattern)
         
-        // Ensure the regex is valid
         guard let regex = regex else {
             print("Failed to create regex")
             return []
         }
         
-        // Find matches in the text
         let matches = regex.matches(in: text, range: NSRange(text.startIndex..<text.endIndex, in: text))
         
-        // Convert matches to Double values
         return matches.compactMap { match in
-            if let range = Range(match.range(at: 1), in: text) { // Extract the first capture group (number)
+            if let range = Range(match.range(at: 1), in: text) { 
                 return Double(text[range])
             }
             return nil
@@ -153,29 +144,25 @@ struct ReportDetailView: View {
         var colors: [Color] = []
         
         for i in 0..<count {
-            colors.append(shuffledColors[i % shuffledColors.count]) // Cycle through base colors
+            colors.append(shuffledColors[i % shuffledColors.count]) 
         }
         
         return colors
     }
     
     private func extractUsernames(from text: String) -> [String] {
-        // Regular expression to match usernames followed by ":"
         let pattern = "(?:Cheltuieli:\\s*)?(\\w+):"
         let regex = try? NSRegularExpression(pattern: pattern)
         
-        // Ensure the regex is valid
         guard let regex = regex else {
             print("Failed to create regex")
             return []
         }
         
-        // Find matches in the text
         let matches = regex.matches(in: text, range: NSRange(text.startIndex..<text.endIndex, in: text))
         
-        // Extract usernames from matches
         return matches.compactMap { match in
-            if let range = Range(match.range(at: 1), in: text) { // Extract the first capture group (username)
+            if let range = Range(match.range(at: 1), in: text) { 
                 return String(text[range])
             }
             return nil

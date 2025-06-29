@@ -55,7 +55,7 @@ struct PersistenceController {
                 user2.password = "user1234"
                 user2.createdBy = admin.username
                 
-                // MARK: - Categorii
+                // Categorii
                 let rentCategory = CategoryEntity(context: context)
                 rentCategory.id = UUID()
                 rentCategory.name = "Locuinta"
@@ -80,7 +80,7 @@ struct PersistenceController {
                 productsCategory.type = "expense"
                 productsCategory.createdBy = admin.username
                 
-                // MARK: - Tranzacții de test
+                // Tranzacții de test
                 let salaryTx = TransactionEntity(context: context)
                 salaryTx.id = UUID()
                 salaryTx.date = Date()

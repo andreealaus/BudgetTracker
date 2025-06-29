@@ -31,7 +31,6 @@ struct CategoryPickerView: View {
                 Text(category.name ?? "Necunoscut")
                     .onTapGesture {
                         selectedCategory = category
-                        // Închidem pickerul după ce alegem o categorie
                     }
             }
             .navigationTitle("Selectează Categoria")

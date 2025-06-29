@@ -80,7 +80,7 @@ struct RegistrationView: View {
             errorMessage = "Parola trebuie să aibă cel puțin 8 caractere."
             return
         }
-        let passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+        let passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[,.<>;:'\"!@#$%^&*()_\\-~`])[A-Za-z\\d,.<>;:'\"!@#$%^&*()_\\-~`]{8,}$"
         guard NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password) else {
             errorMessage = "Parola trebuie să conțină minim 8 caractere, o literă mare, o literă mică, un număr și un caracter special."
             return

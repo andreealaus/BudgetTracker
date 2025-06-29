@@ -48,9 +48,7 @@ struct AddTransactionView: View {
                     Picker("Categorie", selection: $selectedCategory) {
                         ForEach(
                             coreDataCategories.filter { category in
-                                // includem și categoriile default (createdBy nil)
-                                category.createdBy == nil
-                                || category.createdBy == currentUser
+                                category.createdBy == currentUser
                                 || category.createdBy == familyAdmin
                             },
                             id: \.id
