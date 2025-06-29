@@ -3,6 +3,7 @@ import CoreData
 
 struct TotalView: View {
     @EnvironmentObject var budgetManager: BudgetManager
+    @Environment(\.managedObjectContext) private var viewContext
     
     // Tranzacțiile filtrate transmise din DashboardView
     var transactions: [TransactionEntity]
@@ -13,21 +14,17 @@ struct TotalView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text("Total Overview")
-                    .font(.title)
-                    .padding()
-                
                 // Picker cu meniul lunilor
                 Menu {
                     ForEach(1..<13, id: \.self) { month in
                         Button(action: {
                             selectedMonth = month
                         }) {
-                            Text(monthName(for: month))
+                            Text(CoreDataUtils.monthName(for: month))
                         }
                     }
                 } label: {
-                    Text("Alege luna: \(monthName(for: selectedMonth))")
+                    Text("Alege luna: \(CoreDataUtils.monthName(for: selectedMonth))")
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -97,23 +94,39 @@ struct TotalView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Total")
+            .navigationTitle("Tranzacții lunare")
         }
     }
     
-    // Funcție pentru obținerea numelui lunii
-    private func monthName(for month: Int) -> String {
-        let dateFormatter = DateFormatter()
-        return dateFormatter.monthSymbols[month - 1]
-    }
-
-    // Funcție pentru ștergerea tranzacției
+    // Funcție pentru ștergerea tranzacției și actualizarea planului bugetar
     private func deleteTransaction(transaction: TransactionEntity) {
-        let context = PersistenceController.shared.container.viewContext
-        context.delete(transaction)
         do {
-            try context.save()
-            print("Tranzacție ștearsă")
+            try viewContext.save()
+
+            // Actualizăm planul bugetar după ștergerea tranzacției
+            guard let category = transaction.category else {
+                print("⚠️ Categoria tranzacției este nil. Nu se poate actualiza planul bugetar.")
+                return
+            }
+
+            let planOwner: String
+            if let userEntity = CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username),
+            let createdBy = userEntity.createdBy {
+                planOwner = createdBy
+            } else {
+                planOwner = budgetManager.currentUser?.username ?? ""
+            }
+
+            let addTransactionView = AddTransactionView()
+            addTransactionView.updateBudgetPlan(
+                for: category,
+                addedAmount: -transaction.totalAmount,
+                planOwner: planOwner,
+                context: viewContext
+            )
+            viewContext.delete(transaction)
+
+            print("Tranzacție ștearsă și planul bugetar actualizat.")
         } catch {
             print("Eroare la ștergerea tranzacției: \(error)")
         }

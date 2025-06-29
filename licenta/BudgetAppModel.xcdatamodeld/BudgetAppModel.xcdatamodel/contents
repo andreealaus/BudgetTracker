@@ -21,16 +21,12 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="users" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserEntity" inverseName="family" inverseEntity="UserEntity"/>
     </entity>
-    <entity name="NoteEntity" representedClassName="NoteEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="content" optional="YES" attributeType="String"/>
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="note" optional="YES" attributeType="String"/>
-    </entity>
+    <entity name="NoteEntity" representedClassName="NoteEntity" syncable="YES" codeGenerationType="class"/>
     <entity name="ReportEntity" representedClassName="ReportEntity" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="createdBy" optional="YES" attributeType="String"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="familyId" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>

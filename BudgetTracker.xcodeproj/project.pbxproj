@@ -41,6 +41,7 @@
 		578CBECF2DA1BF99006577D3 /* AddCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */; };
 		57D762B22DAAAC5B00F8AA25 /* CategoryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */; };
 		57D762B42DAAC35200F8AA25 /* EditTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D762B32DAAC35200F8AA25 /* EditTransactionView.swift */; };
+		FFA2C0D52E1167DB00413AC1 /* CoreDataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA2C0D42E1167D600413AC1 /* CoreDataUtils.swift */; };
 		FFAA92922E04725B00E12270 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA92912E04725B00E12270 /* PieChartView.swift */; };
 /* End PBXBuildFile section */
 
@@ -99,6 +100,7 @@
 		578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryView.swift; sourceTree = "<group>"; };
 		57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerView.swift; sourceTree = "<group>"; };
 		57D762B32DAAC35200F8AA25 /* EditTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTransactionView.swift; sourceTree = "<group>"; };
+		FFA2C0D42E1167D600413AC1 /* CoreDataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataUtils.swift; sourceTree = "<group>"; };
 		FFAA92912E04725B00E12270 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,6 +151,7 @@
 		5746C6A92D668AE700ADE4FA /* licenta */ = {
 			isa = PBXGroup;
 			children = (
+				FFA2C0D42E1167D600413AC1 /* CoreDataUtils.swift */,
 				5746C6AE2D668AE900ADE4FA /* Assets.xcassets */,
 				5746C6B02D668AE900ADE4FA /* licenta.entitlements */,
 				5746C6B12D668AE900ADE4FA /* Preview Content */,
@@ -347,6 +350,7 @@
 				5746C6EA2D6757EC00ADE4FA /* AdminPanelView.swift in Sources */,
 				57D762B42DAAC35200F8AA25 /* EditTransactionView.swift in Sources */,
 				5746C6F42D6781B000ADE4FA /* TotalView.swift in Sources */,
+				FFA2C0D52E1167DB00413AC1 /* CoreDataUtils.swift in Sources */,
 				578C18EF2D973AED00B7A2DB /* OCRView.swift in Sources */,
 				5746C6E62D67576E00ADE4FA /* HomeView.swift in Sources */,
 				5746C6DC2D66924400ADE4FA /* OCRService.swift in Sources */,

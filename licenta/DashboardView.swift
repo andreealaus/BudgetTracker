@@ -33,29 +33,29 @@ struct DashboardView: View {
             TabView(selection: $selectedTab) {
                 DailyView(transactions: filteredTransactions) 
                     .tabItem {
-                        Image(systemName: "arrow.down.circle")
+                        Image(systemName: "arrow.up.circle")
                         Text("Cheltuieli")
                     }
                     .tag(0)
-                
-                CalendarView(transactions: filteredTransactions) 
-                    .tabItem {
-                        Image(systemName: "calendar")
-                        Text("Calendar")
-                    }
-                    .tag(1)
 
                 MonthlyView(transactions: filteredTransactions) 
                     .tabItem {
-                        Image(systemName: "arrow.up.circle")
+                        Image(systemName: "arrow.down.circle")
                         Text("Venituri")
                     }
+                    .tag(1)
+
+                CalendarView(transactions: filteredTransactions) 
+                    .tabItem {
+                        Image(systemName: "calendar")
+                        Text("Tranzacții zilnice")
+                    }
                     .tag(2)
-                
+
                 TotalView(transactions: filteredTransactions) 
                     .tabItem {
                         Image(systemName: "sum")
-                        Text("Total")
+                        Text("Tranzacții lunare")
                     }
                     .tag(3)
             }
@@ -94,22 +94,6 @@ struct DashboardView: View {
         }
     }
 
-    // Funcție pentru ștergerea tranzacției
-    private func deleteTransaction(transaction: TransactionEntity) {
-        // Ștergem tranzacția din Core Data
-        if let index = filteredTransactions.firstIndex(of: transaction) {
-            let txToDelete = filteredTransactions[index]
-            viewContext.delete(txToDelete)
-            do {
-                try viewContext.save()
-                print("Tranzacție ștearsă")
-            } catch {
-                print("Eroare la ștergerea tranzacției: \(error)")
-            }
-        }
-    }
-
-    
 }
 
 struct DashboardView_Previews: PreviewProvider {

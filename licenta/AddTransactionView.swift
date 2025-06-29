@@ -43,7 +43,7 @@ struct AddTransactionView: View {
                     // username‑ul curent
                     let currentUser = budgetManager.currentUser?.username
                     // adminul familiei (dacă există)
-                    let familyAdmin = fetchCurrentUserEntity()?.createdBy
+                    let familyAdmin = CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username)?.createdBy
 
                     Picker("Categorie", selection: $selectedCategory) {
                         ForEach(
@@ -117,7 +117,7 @@ struct AddTransactionView: View {
         }
 
         let planOwner: String
-        if let userEntity = (selectedCategory == nil ? nil : fetchCurrentUserEntity()),
+        if let userEntity = (selectedCategory == nil ? nil : CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username)),
            let createdBy = userEntity.createdBy {
             planOwner = createdBy
         } else {
@@ -158,12 +158,5 @@ struct AddTransactionView: View {
             print("⚠️ Eroare la actualizarea planului: \(error)")
             presentationMode.wrappedValue.dismiss()
         }
-    }
-
-    private func fetchCurrentUserEntity() -> UserEntity? {
-        guard let username = budgetManager.currentUser?.username else { return nil }
-        let req: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        req.predicate = NSPredicate(format: "username == %@", username)
-        return (try? viewContext.fetch(req))?.first
     }
 }

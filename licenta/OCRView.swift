@@ -10,6 +10,8 @@ struct OCRView: View {
     @State private var showingImagePicker = false
     @State private var selectedCategory: CategoryEntity?
     @State private var categoryPickerPresented = false
+    // Pentru alertă când nu există categorie
+    @State private var showCategoryAlert = false
 
     // Categoriile din Core Data
     @FetchRequest(
@@ -46,7 +48,7 @@ struct OCRView: View {
                             // username-ul curent
                             let currentUser = budgetManager.currentUser?.username
                             // adminul familiei (dacă există)
-                            let familyAdmin = fetchCurrentUserEntity()?.createdBy
+                            let familyAdmin = CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username)?.createdBy
                             
                             // Afișăm categoriile implicite sau cele adăugate de adminul din familia utilizatorului
                             return category.createdBy == nil
@@ -76,18 +78,25 @@ struct OCRView: View {
                     print("Nu există o imagine pentru procesare")
                     return
                 }
-                
-                OCRService.scanReceipt(from: imageToProcess) { result in
-                    DispatchQueue.main.async {
-                        extractedAmount = result
-                        if let amount = result {
-                            // Adăugăm tranzacția de cheltuieli automat
-                            addExpenseTransaction(amount: amount)
-                        } else {
-                            print("Nu a fost extrasă nicio sumă")
+
+                if selectedCategory == nil {
+                        showCategoryAlert = true
+                } else {
+                    OCRService.scanReceipt(from: imageToProcess) { result in
+                        DispatchQueue.main.async {
+                            extractedAmount = result
+                            if let amount = result {
+                                // Adăugăm tranzacția de cheltuieli automat
+                                addExpenseTransaction(amount: amount)
+                            } else {
+                                print("Nu a fost extrasă nicio sumă")
+                            }
                         }
                     }
                 }
+            }
+            .alert("Alege o categorie", isPresented: $showCategoryAlert) {
+                    Button("OK", role: .cancel) { }
             }
             .padding()
             .background(Color.green)
@@ -137,23 +146,16 @@ struct OCRView: View {
         
         // Actualizăm planul de buget asociat categoriei
         let planOwner: String
-        if let userEntity = (selectedCategory == nil ? nil : fetchCurrentUserEntity()),
+        if let userEntity = (selectedCategory == nil ? nil : CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username)),
            let createdBy = userEntity.createdBy {
             planOwner = createdBy
         } else {
             planOwner = budgetManager.currentUser?.username ?? ""
         }
-            if let selectedCategory = selectedCategory {
-                let addTransactionView = AddTransactionView()
-                addTransactionView.updateBudgetPlan(for: selectedCategory, addedAmount: amount, planOwner: planOwner, context: viewContext)
-            }
-    }
-
-    private func fetchCurrentUserEntity() -> UserEntity? {
-        guard let username = budgetManager.currentUser?.username else { return nil }
-        let req: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
-        req.predicate = NSPredicate(format: "username == %@", username)
-        return (try? viewContext.fetch(req))?.first
+        if let selectedCategory = selectedCategory {
+            let addTransactionView = AddTransactionView()
+            addTransactionView.updateBudgetPlan(for: selectedCategory, addedAmount: amount, planOwner: planOwner, context: viewContext)
+        }
     }
 }
 

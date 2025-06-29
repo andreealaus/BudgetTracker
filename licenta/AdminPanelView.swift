@@ -6,35 +6,30 @@ struct AdminPanelView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) var presentationMode
 
-    // MARK: – Sheet flags
+    // Flags
     @State private var showAddUser = false
     @State private var showAddCategory = false
     @State private var showPlanBudget = false
     @State private var showReports = false
     @State private var showAddReport = false
 
-    // MARK: – Add User form
+    // Formular de adaugare a userilor
     @State private var newUserName = ""
     @State private var newUserPassword = ""
     @State private var userErrorMessage = ""
 
-    // MARK: – Add Category form
+    // Formular de adaugare a categoriilor
     @State private var newCategoryName = ""
     @State private var newCategoryType: CategoryType = .expense
 
-    // MARK: – Plan Budget form
+    // Planificare buget
     @State private var calendarExpanded = false
     @State private var selectedPlanMonth = Date() 
     @State private var selectedExpenseCategory: CategoryEntity?
     @State private var budgetGoalTarget = ""
-    @State private var budgetGoalProgress = ""
-    //obtinerea numelui lunii
-    private func monthName(for month: Int) -> String {
-        let dateFormatter = DateFormatter()
-        return dateFormatter.monthSymbols[month - 1]
-    }
+    @State private var showBudgetAlreadyExistsAlert = false
     
-    // MARK: – CoreData fetches
+    // Fetches
     @FetchRequest(entity: UserEntity.entity(), sortDescriptors: [])
     var coreDataUsers: FetchedResults<UserEntity>
 
@@ -52,7 +47,7 @@ struct AdminPanelView: View {
             Color(.systemGray4).edgesIgnoringSafeArea(.all)
 
             List {
-                // MARK: – Utilizatori
+                // Utilizatori
                 Section("Utilizatori") {
                     let adminName = budgetManager.currentUser?.username
                     let users = coreDataUsers.filter {
@@ -75,7 +70,7 @@ struct AdminPanelView: View {
                     Button("Adaugă Utilizator") { showAddUser = true }
                 }
 
-                // MARK: – Categorii
+                // Categorii
                 Section("Categorii") {
                     let adminName = budgetManager.currentUser?.username
                     let cats = coreDataCategories.filter {
@@ -92,19 +87,18 @@ struct AdminPanelView: View {
                     Button("Adaugă Categorie") { showAddCategory = true }
                 }
 
-                // MARK: – Planificare Buget Lunar
+                // Planificare Buget Lunar
                 Section("Planificare Buget Lunar") {
                     Button("Planifică Buget") {
                         calendarExpanded = false
                         selectedPlanMonth = Date()
                         selectedExpenseCategory = nil
                         budgetGoalTarget = ""
-                        budgetGoalProgress = ""
                         showPlanBudget = true
                     }
                 }
 
-                // MARK: – Rapoarte Lunare
+                // Rapoarte Lunare
                 Section("Rapoarte Lunare") {
                     Button("Vezi Rapoarte") { showReports = true }
                     Button("Adaugă Raport Lunar") { showAddReport = true }
@@ -125,7 +119,7 @@ struct AdminPanelView: View {
             }
         }
 
-        // MARK: – Add User Sheet
+        // Formular de adăugare utilizator
         .sheet(isPresented: $showAddUser) {
             VStack {
                 Text("Adaugă Utilizator").font(.headline)
@@ -145,7 +139,7 @@ struct AdminPanelView: View {
             .padding()
         }
 
-        // MARK: – Add Category Sheet
+        // Formular de adăugare categorie
         .sheet(isPresented: $showAddCategory) {
             VStack {
                 Text("Adaugă Categorie").font(.headline)
@@ -168,7 +162,7 @@ struct AdminPanelView: View {
             .padding()
         }
 
-        // MARK: – Planifică Buget Sheet
+        // Formular de planificare buget lunar
         .sheet(isPresented: $showPlanBudget) {
             let adminName = budgetManager.currentUser?.username
             let expenseCats = coreDataCategories.filter {
@@ -189,11 +183,11 @@ struct AdminPanelView: View {
                             selectedPlanMonth = Calendar.current.date(from: components) ?? Date()
         
                         }) {
-                            Text(monthName(for: month))
+                            Text(CoreDataUtils.monthName(for: month))
                         }
                     }
                 } label: {
-                    Text("Alege luna: \(monthName(for: Calendar.current.component(.month, from:selectedPlanMonth)))")
+                    Text("Alege luna: \(CoreDataUtils.monthName(for: Calendar.current.component(.month, from:selectedPlanMonth)))")
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -217,13 +211,24 @@ struct AdminPanelView: View {
                     Button("Salvează Planul") {
                         guard let cat = selectedExpenseCategory else { return }
                         addBudgetPlan(for: cat)
-                        showPlanBudget = false
                     }
                     .padding(.top)
                 }
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(8)
+                // Alertă dacă planul este depășit
+                .alert("Atenționare", isPresented: $showBudgetAlreadyExistsAlert) {
+                    Button("OK") {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                } message: {
+                    if let categoryName = selectedExpenseCategory?.name {
+                        Text("Pentru categoria „\(categoryName)” este deja definită o planificare bugetară.")
+                    } else {
+                        Text("Este deja definită o planificare bugetară pentru categoria selectată.")
+                    }
+                }
                 
                 // Filtrăm planurile în funcție de luna selectată
                 let filteredPlans = myPlans.filter { plan in
@@ -238,7 +243,7 @@ struct AdminPanelView: View {
                         .font(.subheadline)
                         .padding(.bottom, 4)
 
-                    // Lista cu swipe-to-delete pentru planuri
+                    // Lista pentru planuri
                     List {
                         Section(header:
                             HStack {
@@ -261,10 +266,7 @@ struct AdminPanelView: View {
                                     Text(String(format: "%.2f", plan.progress))
                                         .frame(width: 62, alignment: .center)
                                     let exceeded = plan.amount - plan.progress
-                                    Text(exceeded > 0
-                                        ? String(format: "%.2f", exceeded)
-                                        : "0.00"
-                                    )
+                                    Text(String(format: "%.2f", exceeded))
                                     .frame(width: 71, alignment: .center)
                                     .foregroundColor(exceeded < 0 ? .red : .primary)
                                 }
@@ -283,18 +285,14 @@ struct AdminPanelView: View {
             .padding()
         }
 
-        // MARK: – View Reports Sheet
         .sheet(isPresented: $showReports) {
             ReportsView().environmentObject(budgetManager)
         }
 
-        // MARK: – Add Monthly Report Sheet
         .sheet(isPresented: $showAddReport) {
             MonthlyReportView().environment(\.managedObjectContext, viewContext)
         }
     }
-
-    // MARK: – Helper Methods
 
     private func addNewRegularUser() {
         guard !newUserName.isEmpty, !newUserPassword.isEmpty else {
@@ -353,15 +351,48 @@ struct AdminPanelView: View {
     }
 
     private func addBudgetPlan(for cat: CategoryEntity) {
+
+        let adminName = budgetManager.currentUser?.username
+        let myPlans = budgetPlans.filter { $0.createdBy == adminName }
+        let filteredPlans = myPlans.filter { plan in
+            guard let date = plan.date else { return false }
+            let planMonth = Calendar.current.component(.month, from: date)
+            let selectedMonth = Calendar.current.component(.month, from: selectedPlanMonth)
+            return planMonth == selectedMonth
+        }
+
+        // Verifica daca exista deja un plan pentru categoria selectata
+        if filteredPlans.contains(where: { $0.title == cat.name && Calendar.current.isDate($0.date ?? Date(), inSameDayAs: selectedPlanMonth) }) {
+            showBudgetAlreadyExistsAlert = true
+            return
+        }
+
+        // Definim fetchRequest-ul pentru tranzacții
+        let fetchRequest: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "category == %@", cat)
+
+        do {
+        // Execute the fetch request
+        let transactions = try viewContext.fetch(fetchRequest)
+        
+        // Calculate the sum of totalAmount for all fetched transactions
+        let totalAmountSum = transactions.reduce(0.0) { $0 + $1.totalAmount }
+        print("Suma totală a tranzacțiilor pentru categoria \(cat.name ?? "necunoscută"): \(totalAmountSum)")
+        
+        // Create a new budget plan
         let bp = BudgetPlanEntity(context: viewContext)
         bp.id = UUID()
         bp.title = cat.name
         bp.amount = Double(budgetGoalTarget) ?? 0
-        bp.progress = Double(budgetGoalProgress) ?? 0
+        bp.progress = totalAmountSum // Use the calculated sum as the progress
         bp.date = selectedPlanMonth
         bp.createdBy = budgetManager.currentUser?.username
         bp.familyID = budgetManager.currentUser?.familyID
-        try? viewContext.save()
+        
+        try viewContext.save()
+    } catch {
+        print("⚠️ Eroare la obținerea tranzacțiilor sau salvarea planului: \(error)")
+    }
     }
 }
 

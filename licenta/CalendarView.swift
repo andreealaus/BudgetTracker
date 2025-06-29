@@ -68,7 +68,7 @@ struct CalendarView: View {
                 }
                 Spacer()
             }
-            .navigationTitle("Calendar")
+            .navigationTitle("Tranzacții zilnice")
         }
     }
 
@@ -76,22 +76,50 @@ struct CalendarView: View {
     private func filteredTransactions(for date: Date) -> [TransactionEntity] {
         guard let currentUser = budgetManager.currentUser else { return [] }
         return transactions.filter { tx in
-            guard let user = tx.user else { return false }
+            guard
+                let user = tx.user,
+                let catType = tx.category?.type
+            else { return false }
             let isSameDay = Calendar.current.isDate(tx.date ?? Date(), inSameDayAs: date)
-            return isSameDay && user.familyID == currentUser.familyID
+            let sameFamily = user.familyID == currentUser.familyID
+            return isSameDay && sameFamily
         }
     }
 
-    // Funcție pentru ștergerea tranzacției
+    // Funcție pentru ștergerea tranzacției și actualizarea planului bugetar
     private func deleteTransaction(transaction: TransactionEntity) {
-        viewContext.delete(transaction)
         do {
             try viewContext.save()
-            print("Tranzacție ștearsă")
+
+            // Actualizăm planul bugetar după ștergerea tranzacției
+            guard let category = transaction.category else {
+                print("⚠️ Categoria tranzacției este nil. Nu se poate actualiza planul bugetar.")
+                return
+            }
+
+            let planOwner: String
+            if let userEntity = CoreDataUtils.fetchCurrentUserEntity(context: viewContext, username: budgetManager.currentUser?.username),
+            let createdBy = userEntity.createdBy {
+                planOwner = createdBy
+            } else {
+                planOwner = budgetManager.currentUser?.username ?? ""
+            }
+
+            let addTransactionView = AddTransactionView()
+            addTransactionView.updateBudgetPlan(
+                for: category,
+                addedAmount: -transaction.totalAmount,
+                planOwner: planOwner,
+                context: viewContext
+            )
+            viewContext.delete(transaction)
+
+            print("Tranzacție ștearsă și planul bugetar actualizat.")
         } catch {
             print("Eroare la ștergerea tranzacției: \(error)")
         }
     }
+    
 
     // Funcție pentru editarea tranzacției (poți deschide o fereastră de editare)
     private func editTransaction(transaction: TransactionEntity) {
