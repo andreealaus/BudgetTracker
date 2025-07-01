@@ -13,6 +13,8 @@ struct OCRView: View {
     // Pentru alertă când nu există categorie
     @State private var showCategoryAlert = false
     @State private var showBudgetExceededAlert = false
+    @State private var showPhotoAlert = false
+    @State private var showNoPhotoAlert = false
 
     // Categoriile din Core Data
     @FetchRequest(
@@ -77,6 +79,7 @@ struct OCRView: View {
             Button("Extrage suma") {
                 guard let imageToProcess = selectedImage else {
                     print("Nu există o imagine pentru procesare")
+                    showNoPhotoAlert = true
                     return
                 }
 
@@ -91,6 +94,7 @@ struct OCRView: View {
                                 addExpenseTransaction(amount: amount)
                             } else {
                                 print("Nu a fost extrasă nicio sumă")
+                                showPhotoAlert = true
                             }
                         }
                     }
@@ -104,6 +108,17 @@ struct OCRView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text("Bugetul pentru categoria selectată fost depășit.")
+            }
+            // Alertă dacă poza nu contine suma
+            .alert("Atentionare Poza", isPresented: $showPhotoAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Fotografia selectata nu a fost recunoscuta drept bon fiscal.")
+            }// Alertă dacă nu a fost selectata poza
+            .alert("Atentionare Poza", isPresented: $showNoPhotoAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Selecteaza o fotografie.")
             }
             .padding()
             .background(Color.green)
