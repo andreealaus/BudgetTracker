@@ -11,7 +11,6 @@
 		5746C6B32D668AE900ADE4FA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5746C6B22D668AE900ADE4FA /* Preview Assets.xcassets */; };
 		5746C6D62D66915200ADE4FA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6D52D66915200ADE4FA /* Models.swift */; };
 		5746C6D82D6691DA00ADE4FA /* BudgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6D72D6691DA00ADE4FA /* BudgetManager.swift */; };
-		5746C6DA2D66921500ADE4FA /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6D92D66921500ADE4FA /* NotificationManager.swift */; };
 		5746C6DC2D66924400ADE4FA /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6DB2D66924400ADE4FA /* OCRService.swift */; };
 		5746C6DE2D66927900ADE4FA /* BudgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6DD2D66927900ADE4FA /* BudgetApp.swift */; };
 		5746C6E42D6756C900ADE4FA /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5746C6E32D6756C900ADE4FA /* LoginView.swift */; };
@@ -36,7 +35,6 @@
 		578CBECB2DA1AED8006577D3 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECA2DA1AED8006577D3 /* ReportsView.swift */; };
 		578CBECD2DA1BF4D006577D3 /* AddUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECC2DA1BF4D006577D3 /* AddUserView.swift */; };
 		578CBECF2DA1BF99006577D3 /* AddCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */; };
-		57D762B22DAAAC5B00F8AA25 /* CategoryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */; };
 		FFA2C0D52E1167DB00413AC1 /* CoreDataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA2C0D42E1167D600413AC1 /* CoreDataUtils.swift */; };
 		FFAA92922E04725B00E12270 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFAA92912E04725B00E12270 /* PieChartView.swift */; };
 /* End PBXBuildFile section */
@@ -67,7 +65,6 @@
 		5746C6C22D668AEA00ADE4FA /* BudgetTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BudgetTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5746C6D52D66915200ADE4FA /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		5746C6D72D6691DA00ADE4FA /* BudgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetManager.swift; sourceTree = "<group>"; };
-		5746C6D92D66921500ADE4FA /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		5746C6DB2D66924400ADE4FA /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		5746C6DD2D66927900ADE4FA /* BudgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetApp.swift; sourceTree = "<group>"; };
 		5746C6E32D6756C900ADE4FA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -91,7 +88,6 @@
 		578CBECA2DA1AED8006577D3 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
 		578CBECC2DA1BF4D006577D3 /* AddUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserView.swift; sourceTree = "<group>"; };
 		578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryView.swift; sourceTree = "<group>"; };
-		57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerView.swift; sourceTree = "<group>"; };
 		FFA2C0D42E1167D600413AC1 /* CoreDataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataUtils.swift; sourceTree = "<group>"; };
 		FFAA92912E04725B00E12270 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -149,7 +145,6 @@
 				5746C6B12D668AE900ADE4FA /* Preview Content */,
 				5746C6D52D66915200ADE4FA /* Models.swift */,
 				5746C6D72D6691DA00ADE4FA /* BudgetManager.swift */,
-				5746C6D92D66921500ADE4FA /* NotificationManager.swift */,
 				5746C6DB2D66924400ADE4FA /* OCRService.swift */,
 				5746C6DD2D66927900ADE4FA /* BudgetApp.swift */,
 				5746C6E32D6756C900ADE4FA /* LoginView.swift */,
@@ -174,7 +169,6 @@
 				578CBECA2DA1AED8006577D3 /* ReportsView.swift */,
 				578CBECC2DA1BF4D006577D3 /* AddUserView.swift */,
 				578CBECE2DA1BF99006577D3 /* AddCategoryView.swift */,
-				57D762B12DAAAC5B00F8AA25 /* CategoryPickerView.swift */,
 			);
 			path = licenta;
 			sourceTree = "<group>";
@@ -332,7 +326,6 @@
 				578CBEC92DA1A750006577D3 /* MonthlyReportView.swift in Sources */,
 				578C18F12D98212D00B7A2DB /* SignUpView.swift in Sources */,
 				5746C6F02D67813500ADE4FA /* CalendarView.swift in Sources */,
-				57D762B22DAAAC5B00F8AA25 /* CategoryPickerView.swift in Sources */,
 				5746C6EE2D6780FB00ADE4FA /* DailyView.swift in Sources */,
 				5746C6EA2D6757EC00ADE4FA /* AdminPanelView.swift in Sources */,
 				5746C6F42D6781B000ADE4FA /* TotalView.swift in Sources */,
@@ -341,7 +334,6 @@
 				5746C6E62D67576E00ADE4FA /* HomeView.swift in Sources */,
 				5746C6DC2D66924400ADE4FA /* OCRService.swift in Sources */,
 				578CBECB2DA1AED8006577D3 /* ReportsView.swift in Sources */,
-				5746C6DA2D66921500ADE4FA /* NotificationManager.swift in Sources */,
 				578CBECF2DA1BF99006577D3 /* AddCategoryView.swift in Sources */,
 				FFAA92922E04725B00E12270 /* PieChartView.swift in Sources */,
 				5746C6F22D67815E00ADE4FA /* MonthlyView.swift in Sources */,

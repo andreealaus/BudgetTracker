@@ -368,27 +368,31 @@ struct AdminPanelView: View {
         }
 
         // Definim fetchRequest-ul pentru tranzacții
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: selectedPlanMonth))!
+        let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)!
+
         let fetchRequest: NSFetchRequest<TransactionEntity> = TransactionEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "category == %@", cat)
+        fetchRequest.predicate = NSPredicate(format: "category == %@ AND date >= %@ AND date <= %@", cat, startOfMonth as NSDate, endOfMonth as NSDate)
 
         do {
-        let transactions = try viewContext.fetch(fetchRequest)
-        let totalAmountSum = transactions.reduce(0.0) { $0 + $1.totalAmount }
-        print("Suma totală a tranzacțiilor pentru categoria \(cat.name ?? "necunoscută"): \(totalAmountSum)")
-        
-        let bp = BudgetPlanEntity(context: viewContext)
-        bp.id = UUID()
-        bp.title = cat.name
-        bp.amount = Double(budgetGoalTarget) ?? 0
-        bp.progress = totalAmountSum 
-        bp.date = selectedPlanMonth
-        bp.createdBy = budgetManager.currentUser?.username
-        bp.familyID = budgetManager.currentUser?.familyID
-        
-        try viewContext.save()
-    } catch {
-        print("⚠️ Eroare la obținerea tranzacțiilor sau salvarea planului: \(error)")
-    }
+            let transactions = try viewContext.fetch(fetchRequest)
+            let totalAmountSum = transactions.reduce(0.0) { $0 + $1.totalAmount }
+            print("Suma totală a tranzacțiilor pentru categoria \(cat.name ?? "necunoscută"): \(totalAmountSum)")
+            
+            let bp = BudgetPlanEntity(context: viewContext)
+            bp.id = UUID()
+            bp.title = cat.name
+            bp.amount = Double(budgetGoalTarget) ?? 0
+            bp.progress = totalAmountSum 
+            bp.date = selectedPlanMonth
+            bp.createdBy = budgetManager.currentUser?.username
+            bp.familyID = budgetManager.currentUser?.familyID
+            
+            try viewContext.save()
+        } catch {
+            print("⚠️ Eroare la obținerea tranzacțiilor sau salvarea planului: \(error)")
+        }
     }
 }
 

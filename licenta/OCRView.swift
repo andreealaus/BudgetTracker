@@ -12,6 +12,7 @@ struct OCRView: View {
     @State private var categoryPickerPresented = false
     // Pentru alertă când nu există categorie
     @State private var showCategoryAlert = false
+    @State private var showBudgetExceededAlert = false
 
     // Categoriile din Core Data
     @FetchRequest(
@@ -98,6 +99,12 @@ struct OCRView: View {
             .alert("Alege o categorie", isPresented: $showCategoryAlert) {
                     Button("OK", role: .cancel) { }
             }
+            // Alertă dacă planul este depășit
+            .alert("Atentionare Buget", isPresented: $showBudgetExceededAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Bugetul pentru categoria selectată fost depășit.")
+            }
             .padding()
             .background(Color.green)
             .foregroundColor(.white)
@@ -153,8 +160,29 @@ struct OCRView: View {
             planOwner = budgetManager.currentUser?.username ?? ""
         }
         if let selectedCategory = selectedCategory {
-            let addTransactionView = AddTransactionView()
-            addTransactionView.updateBudgetPlan(for: selectedCategory, addedAmount: amount, planOwner: planOwner, context: viewContext)
+            updateBudgetPlan(for: selectedCategory, addedAmount: amount, planOwner: planOwner, context: viewContext)
+        }
+    }
+
+    private func updateBudgetPlan(for category: CategoryEntity, addedAmount: Double, planOwner: String, context: NSManagedObjectContext) {
+        let calendar = Calendar.current
+        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: Date())) ?? Date()
+        let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) ?? Date()
+
+        let planReq: NSFetchRequest<BudgetPlanEntity> = BudgetPlanEntity.fetchRequest()
+        planReq.predicate = NSPredicate(format: "title == %@ AND createdBy == %@ AND date >= %@ AND date < %@", category.name ?? "", planOwner, startOfMonth as NSDate, endOfMonth as NSDate)
+
+        do {
+            if let plan = try context.fetch(planReq).first {
+                plan.progress += addedAmount
+                let exceeded = plan.progress > plan.amount
+                try context.save()
+                if exceeded {
+                    showBudgetExceededAlert = true // Update the alert state
+                }
+            }
+        } catch {
+            print("⚠️ Eroare la actualizarea planului: \(error)")
         }
     }
 }

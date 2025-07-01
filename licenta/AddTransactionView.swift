@@ -15,7 +15,7 @@ struct AddTransactionView: View {
     @State private var showCategoryAlert = false
 
     // Pentru alertă când bugetul este depășit
-    @State private var showBudgetExceededAlert = false
+    @State public var showBudgetExceededAlert = false
     @State private var exceededCategoryName = ""
 
     // Categoriile din Core Data
